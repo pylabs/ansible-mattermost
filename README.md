@@ -9,6 +9,8 @@ Role Variables
 
 ```yaml
 mattermost_version: MATTERMOST_VERSION
+mattermost_user: USER_ACCOUNT_THAT_RUNNING_MATTERMOST_SERVICE (default: mattermost)
+mattermost_group: GROUP_ACCOUNT_THAT_RUNNING_MATTERMOST_SERVICE (default: mattermost)
 ```
 
 Dependencies
