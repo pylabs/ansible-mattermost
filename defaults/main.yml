@@ -1,2 +1,6 @@
 ---
-# defaults file for ansible-mattermost
+mattermost_user: mattermost
+mattermost_group: mattermost
+mattermost_db_user: mattermost
+mattermost_db_name: mattermost
+mattermost_root_dir: /opt/mattermost

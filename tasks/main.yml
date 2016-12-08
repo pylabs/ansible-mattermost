@@ -1,2 +1,73 @@
 ---
-# tasks file for ansible-mattermost
+- block:
+  - name: get mattermost package
+    unarchive:
+      src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
+      dest: "/opt/mattermost"
+      owner: root
+      group: root
+      mode: "0755"
+      remote_src: "yes"
+  - name: setup mysql fulltext index
+    copy:
+      src: "mattermost.cnf"
+      dest: "/etc/mysql/conf.d/mattermost.cnf"
+      owner: root
+      group: root
+      mode: "0644"
+  - name: restart mysql service
+    service: "name=mysql.service state=restarted"
+  - name: create mattermost database
+    shell: "mysql -u'{{ mattermost_db_user }}' -p'{{ mattermost_db_password }}' -e 'CREATE DATABASE {{ mattermost_db_name }}' && touch /tmp/mattermost_db_ok"
+    args:
+      creates: /tmp/mattermost_db_ok
+  - name: setup db user and password
+    shell: "mysql -u'{{ mattermost_db_user }}' -p'{{ mattermost_db_password }}' -e 'GRANT ALL ON {{ mattermost_db_name }}.* TO {{ mattermost_db_user }}@localhost IDENTIFIED BY \"{{ mattermost_db_password }}\"' && touch /tmp/mattermost_db_permission_ok"
+    args:
+      creates: /tmp/mattermost_db_permission_ok
+  - name: create mattermost group account
+    group:
+      name: "{{ mattermost_group }}"
+      state: "present"
+  - name: create mattermost user account
+    user:
+      name: "{{ mattermost_user }}"
+      group: "{{ mattermost_group }}"
+  - name: create mattermost data dir
+    file:
+      path: "{{ mattermost_root_dir }}/data"
+      owner: "{{ mattermost_user }}"
+      group: "{{ mattermost_group }}"
+      mode: "0700"
+  - name: setup log dir permission
+    file:
+      path: "{{ mattermost_root_dir }}/logs"
+      owner: "{{ mattermost_user }}"
+      group: "{{ mattermost_group }}"
+      mode: "0700"
+      state: directory
+  - name: generate random string
+    shell: "date | md5sum | head -c 32"
+    register: random_string
+  - name: setup mattermost config
+    template:
+      src: "config.json.j2"
+      dest: "{{ mattermost_root_dir }}/config/config.json"
+      owner: "{{ mattermost_user }}"
+      group: "{{ mattermost_group }}"
+      mode: "0700"
+  - name: setup mattermost systemd service
+    template:
+      src: "mattermost.service.j2"
+      dest: "/etc/systemd/system/mattermost.service"
+      owner: root
+      group: root
+      mode: "0644"
+  - name: reload systemd service
+    command: "systemctl daemon-reload"
+  - name: enable mattermost service
+    command: "systemctl enable mattermost.service"
+  - name: start mattermost service
+    command: "systemctl start mattermost.service"
+  tags:
+    - mattermost

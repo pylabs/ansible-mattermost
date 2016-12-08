@@ -1,0 +1,13 @@
+[Unit]
+Description=Mattermost
+After=network.target
+
+[Service]
+User=mattermost
+ExecStart={{ mattermost_root_dir }}/bin/platform
+WorkingDirectory={{ mattermost_root_dir }}
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
