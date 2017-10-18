@@ -18,7 +18,7 @@
   - name: restart mysql service
     service: "name=mysql.service state=restarted"
   - name: create mattermost database
-    shell: "mysql -u'{{ mattermost_db_user }}' -p'{{ mattermost_db_password }}' -e 'CREATE DATABASE {{ mattermost_db_name }}' && touch /tmp/mattermost_db_ok"
+    shell: "mysql -u'{{ mattermost_db_user }}' -p'{{ mattermost_db_password }}' -e 'CREATE DATABASE {{ mattermost_db_name }} CHARSET utf8mb4' && touch /tmp/mattermost_db_ok"
     args:
       creates: /tmp/mattermost_db_ok
   - name: setup db user and password
@@ -39,6 +39,7 @@
       owner: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
       mode: "0700"
+      state: directory
   - name: setup log dir permission
     file:
       path: "{{ mattermost_root_dir }}/logs"
@@ -49,13 +50,27 @@
   - name: generate random string
     shell: "date | md5sum | head -c 32"
     register: random_string
-  - name: setup mattermost config
-    template:
-      src: "config.json.j2"
-      dest: "{{ mattermost_root_dir }}/config/config.json"
+  - name: setup mattermost config DataSource
+    replace:
+      path: "{{ mattermost_root_dir }}/config/config.json"
+      regexp: '"DataSource": "[^"]*"'
+      replace: '"DataSource": "{{ mattermost_db_user }}:{{ mattermost_db_password }}@tcp(localhost:3306)/{{ mattermost_db_name }}?charset=utf8mb4,utf8"'
+  - name: setup mattermost config secret key
+    replace:
+      path: "{{ mattermost_root_dir }}/config/config.json"
+      regexp: '"{{ item }}": "[^"]*"'
+      replace: '"{{ item }}": "{{ random_string.stdout }}"'
+    with_items:
+      - AtRestEncryptKey
+      - PublicLinkSalt
+      - InviteSalt
+      - PasswordResetSalt
+  - name: setup mattermost config permission
+    file:
+      path: "{{ mattermost_root_dir }}/config/config.json"
       owner: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
-      mode: "0700"
+      mode: "0600"
   - name: setup mattermost systemd service
     template:
       src: "mattermost.service.j2"
