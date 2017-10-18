@@ -20,8 +20,8 @@ mattermost_root_dir: MATTERMOST_ROOT_DIR (default: /opt/mattermost)
 Dependencies
 ------------
 
-- evannook.nginx
-- evannook.percona
+- pylabs.nginx
+- pylabs.percona
 
 Example Playbook
 ----------------
@@ -29,7 +29,15 @@ Example Playbook
 ```yaml
 - hosts: servers
   roles:
-     - role: evannook.mattermost
+     - role: pylabs.mattermost
+  vars:
+    mattermost_version: "4.3.0"
+    mattermost_user: mattermost
+    mattermost_group: mattermost
+    mattermost_db_user: mattermost
+    mattermost_db_password: mattermost
+    mattermost_db_name: mattermost
+    mattermost_root_dir: "/opt/mattermost"
 ```
 
 License
@@ -40,4 +48,4 @@ MIT
 Author Information
 ------------------
 
-Evan Nook
+William Wu
