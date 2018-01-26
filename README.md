@@ -31,7 +31,7 @@ Example Playbook
   roles:
      - role: pylabs.mattermost
   vars:
-    mattermost_version: "4.3.0"
+    mattermost_version: "4.6.0"
     mattermost_user: mattermost
     mattermost_group: mattermost
     mattermost_db_user: mattermost
