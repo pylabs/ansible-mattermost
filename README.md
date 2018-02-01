@@ -15,6 +15,7 @@ mattermost_db_user: MATTERMOST_DB_USER (default: mattermost)
 mattermost_db_password: MATTERMOST_DB_PASSWORD
 mattermost_db_name: MATTERMOST_DB_NAME (default: mattermost)
 mattermost_root_dir: MATTERMOST_ROOT_DIR (default: /opt/mattermost)
+mattermost_port: MATTERMOST_PORT (default: 8065)
 ```
 
 Dependencies
@@ -38,6 +39,7 @@ Example Playbook
     mattermost_db_password: mattermost
     mattermost_db_name: mattermost
     mattermost_root_dir: "/opt/mattermost"
+    mattermost_port: 8065
 ```
 
 License

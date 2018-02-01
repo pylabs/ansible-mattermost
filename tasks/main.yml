@@ -3,7 +3,7 @@
   - name: get mattermost package
     unarchive:
       src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
-      dest: "/opt/mattermost"
+      dest: "{{ mattermost_root_dir }}"
       owner: root
       group: root
       mode: "0755"
@@ -18,13 +18,9 @@
   - name: restart mysql service
     service: "name=mysql.service state=restarted"
   - name: create mattermost database
-    shell: "mysql -u'{{ mattermost_db_user }}' -p'{{ mattermost_db_password }}' -e 'CREATE DATABASE {{ mattermost_db_name }} CHARSET utf8mb4' && touch /tmp/mattermost_db_ok"
-    args:
-      creates: /tmp/mattermost_db_ok
+    shell: "mysql -u'root' -p'{{ percona_root_password }}' -e 'CREATE DATABASE {{ mattermost_db_name }} CHARSET utf8mb4'"
   - name: setup db user and password
-    shell: "mysql -u'{{ mattermost_db_user }}' -p'{{ mattermost_db_password }}' -e 'GRANT ALL ON {{ mattermost_db_name }}.* TO {{ mattermost_db_user }}@localhost IDENTIFIED BY \"{{ mattermost_db_password }}\"' && touch /tmp/mattermost_db_permission_ok"
-    args:
-      creates: /tmp/mattermost_db_permission_ok
+    shell: "mysql -u'root' -p'{{ percona_root_password }}' -e 'GRANT ALL ON {{ mattermost_db_name }}.* TO \"{{ mattermost_db_user }}\"@\"localhost\" IDENTIFIED BY \"{{ mattermost_db_password }}\"'"
   - name: create mattermost group account
     group:
       name: "{{ mattermost_group }}"
@@ -47,24 +43,11 @@
       group: "{{ mattermost_group }}"
       mode: "0700"
       state: directory
-  - name: generate random string
-    shell: "date | md5sum | head -c 32"
-    register: random_string
   - name: setup mattermost config DataSource
     replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
       regexp: '"DataSource": "[^"]*"'
-      replace: '"DataSource": "{{ mattermost_db_user }}:{{ mattermost_db_password }}@tcp(localhost:3306)/{{ mattermost_db_name }}?charset=utf8mb4,utf8"'
-  - name: setup mattermost config secret key
-    replace:
-      path: "{{ mattermost_root_dir }}/config/config.json"
-      regexp: '"{{ item }}": "[^"]*"'
-      replace: '"{{ item }}": "{{ random_string.stdout }}"'
-    with_items:
-      - AtRestEncryptKey
-      - PublicLinkSalt
-      - InviteSalt
-      - PasswordResetSalt
+      replace: '"DataSource": "{{ mattermost_db_user }}:{{ mattermost_db_password }}@tcp(localhost:3306)/{{ mattermost_db_name }}?charset=utf8mb4,utf8&readTimeout=30s&writeTimeout=30s"'
   - name: setup mattermost config permission
     file:
       path: "{{ mattermost_root_dir }}/config/config.json"
