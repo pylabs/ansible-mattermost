@@ -1,5 +1,10 @@
 ---
 - block:
+  - name: make sure the dest dir exists
+    file:
+      path: "{{ mattermost_root_dir }}"
+      state: directory
+      mode: "0755"
   - name: get mattermost package
     unarchive:
       src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
