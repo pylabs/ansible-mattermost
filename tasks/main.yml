@@ -1,18 +1,18 @@
 ---
 - block:
-  - name: make sure the dest dir exists
-    file:
-      path: "{{ mattermost_root_dir }}"
-      state: directory
-      mode: "0755"
   - name: get mattermost package
     unarchive:
       src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
-      dest: "{{ mattermost_root_dir }}"
+      dest: "/opt"
       owner: root
       group: root
       mode: "0755"
       remote_src: "yes"
+  - name: rename mattermost path to appropriate path
+    command: "mv /opt/mattermost {{ mattermost_root_dir }}"
+    args:
+      creates: "{{ mattermost_root_dir }}"
+      removes: "/opt/mattermost"
   - name: setup mysql fulltext index
     copy:
       src: "mattermost.cnf"
