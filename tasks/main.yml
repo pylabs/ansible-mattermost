@@ -60,16 +60,16 @@
   - name: setup mattermost systemd service
     template:
       src: "mattermost.service.j2"
-      dest: "/etc/systemd/system/{{ mattermost_team_name }}.service"
+      dest: "/etc/systemd/system/{{ mattermost_team_name }}_mattermost.service"
       owner: root
       group: root
       mode: "0644"
   - name: reload systemd service
     command: "systemctl daemon-reload"
   - name: enable mattermost service
-    command: "systemctl enable {{ mattermost_team_name }}.service"
+    command: "systemctl enable {{ mattermost_team_name }}_mattermost.service"
   - name: start mattermost service
-    command: "systemctl start {{ mattermost_team_name }}.service"
+    command: "systemctl start {{ mattermost_team_name }}_mattermost.service"
   - name: install nginx ssl certs validation config
     template:
       src: "nginx_validate.conf.j2"

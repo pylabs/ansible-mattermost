@@ -9,7 +9,7 @@ Role Variables
 
 ```yaml
 mattermost_version: MATTERMOST_VERSION
-mattermost_team_name: YOUR_TEAM_NAME
+mattermost_team_name: YOUR_TEAM_NAME (ONLY ALLOW [a-zA-Z0-9_])
 mattermost_domain_name: YOUR_DOMAIN_NAME_OF_MATTERMOST_WEB_SITE
 mattermost_user: USER_ACCOUNT_THAT_RUNNING_MATTERMOST_SERVICE (default: mattermost)
 mattermost_group: GROUP_ACCOUNT_THAT_RUNNING_MATTERMOST_SERVICE (default: mattermost)
