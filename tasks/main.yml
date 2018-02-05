@@ -70,5 +70,44 @@
     command: "systemctl enable {{ mattermost_team_name }}.service"
   - name: start mattermost service
     command: "systemctl start {{ mattermost_team_name }}.service"
+  - name: install nginx ssl certs validation config
+    template:
+      src: "nginx_validate.conf.j2"
+      dest: "/etc/nginx/sites-available/{{ mattermost_domain_name }}.conf"
+      owner: root
+      group: root
+      mode: "0644"
+  - name: soft link nginx ssl validation config
+    file:
+      src: "/etc/nginx/sites-available/{{ mattermost_domain_name }}.conf"
+      dest: "/etc/nginx/sites-enabled/{{ mattermost_domain_name }}.conf"
+      owner: "root"
+      group: "root"
+      state: "link"
+  - name: reload nginx
+    command: "systemctl reload nginx"
+  - name: touch dehydrated domain file
+    file:
+      path: "/etc/dehydrated/domains.txt"
+      owner: "root"
+      group: "root"
+      mode: "0644"
+      state: "touch"
+  - name: add domain name to dehydrated domain file
+    lineinfile:
+      path: "/etc/dehydrated/domains.txt"
+      line: "{{ mattermost_domain_name }}"
+      state: "present"
+  - name: run dehydrated validation process
+    command: "dehydrated -c"
+  - name: install nginx production config
+    template:
+      src: "nginx_production.conf.j2"
+      dest: "/etc/nginx/sites-available/{{ mattermost_domain_name }}.conf"
+      owner: root
+      group: root
+      mode: "0644"
+  - name: reload nginx
+    command: "systemctl reload nginx"
   tags:
     - mattermost
