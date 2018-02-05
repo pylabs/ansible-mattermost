@@ -9,7 +9,7 @@
       mode: "0755"
       remote_src: "yes"
   - name: rename mattermost path to appropriate path
-    command: "mv /opt/mattermost {{ mattermost_root_dir }}"
+    command: "mv /opt/mattermost '{{ mattermost_root_dir }}'"
     args:
       creates: "{{ mattermost_root_dir }}"
       removes: "/opt/mattermost"
@@ -34,20 +34,18 @@
     user:
       name: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
-  - name: create mattermost data dir
+  - name: setup mattermost dir permissions
     file:
-      path: "{{ mattermost_root_dir }}/data"
+      path: "{{ mattermost_root_dir }}/{{ item }}"
       owner: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
       mode: "0700"
       state: directory
-  - name: setup log dir permission
-    file:
-      path: "{{ mattermost_root_dir }}/logs"
-      owner: "{{ mattermost_user }}"
-      group: "{{ mattermost_group }}"
-      mode: "0700"
-      state: directory
+    with_items:
+      - "data"
+      - "logs"
+      - "plugins"
+      - "client/plugins"
   - name: setup mattermost config DataSource
     replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
@@ -62,15 +60,15 @@
   - name: setup mattermost systemd service
     template:
       src: "mattermost.service.j2"
-      dest: "/etc/systemd/system/mattermost.service"
+      dest: "/etc/systemd/system/{{ mattermost_team_name }}.service"
       owner: root
       group: root
       mode: "0644"
   - name: reload systemd service
     command: "systemctl daemon-reload"
   - name: enable mattermost service
-    command: "systemctl enable mattermost.service"
+    command: "systemctl enable {{ mattermost_team_name }}.service"
   - name: start mattermost service
-    command: "systemctl start mattermost.service"
+    command: "systemctl start {{ mattermost_team_name }}.service"
   tags:
     - mattermost
