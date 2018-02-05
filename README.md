@@ -11,10 +11,11 @@ Role Variables
 mattermost_version: MATTERMOST_VERSION
 mattermost_user: USER_ACCOUNT_THAT_RUNNING_MATTERMOST_SERVICE (default: mattermost)
 mattermost_group: GROUP_ACCOUNT_THAT_RUNNING_MATTERMOST_SERVICE (default: mattermost)
-mattermost_db_user: MATTERMOST_DB_USER (default: mattermost)
+mattermost_team_name: YOUR_TEAM_NAME
+mattermost_db_user: MATTERMOST_DB_USER (default: {{ mattermost_team_name }})
 mattermost_db_password: MATTERMOST_DB_PASSWORD
-mattermost_db_name: MATTERMOST_DB_NAME (default: mattermost)
-mattermost_root_dir: MATTERMOST_ROOT_DIR (default: /opt/mattermost)
+mattermost_db_name: MATTERMOST_DB_NAME (default: {{ mattermost_team_name }})
+mattermost_root_dir: MATTERMOST_ROOT_DIR (default: /opt/{{ mattermost_team_name }})
 mattermost_port: MATTERMOST_PORT (default: 8065)
 ```
 
@@ -33,13 +34,11 @@ Example Playbook
   roles:
      - role: pylabs.mattermost
   vars:
-    mattermost_version: "4.6.0"
+    mattermost_version: "4.6.1"
     mattermost_user: mattermost
     mattermost_group: mattermost
-    mattermost_db_user: mattermost
+    mattermost_team_name: myteam
     mattermost_db_password: mattermost
-    mattermost_db_name: mattermost
-    mattermost_root_dir: "/opt/mattermost"
     mattermost_port: 8065
 ```
 
