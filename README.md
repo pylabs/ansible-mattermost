@@ -23,6 +23,7 @@ Dependencies
 
 - pylabs.nginx
 - pylabs.percona
+- pylabs.letsencrypt
 
 Example Playbook
 ----------------
