@@ -51,6 +51,11 @@
       path: "{{ mattermost_root_dir }}/config/config.json"
       regexp: '"DataSource": "[^"]*"'
       replace: '"DataSource": "{{ mattermost_db_user }}:{{ mattermost_db_password }}@tcp(localhost:3306)/{{ mattermost_db_name }}?charset=utf8mb4,utf8&readTimeout=30s&writeTimeout=30s"'
+  - name: setup mattermost config ListenAddress
+    replace:
+      path: "{{ mattermost_root_dir }}/config/config.json"
+      regexp: '"ListenAddress": "[^"]*"'
+      replace: '"ListenAddress": ":{{ mattermost_port }}"'
   - name: setup mattermost config permission
     file:
       path: "{{ mattermost_root_dir }}/config/config.json"
