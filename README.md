@@ -1,7 +1,7 @@
 mattermost
 ==========
 
-Mattermost platform setup
+This playbook install mattermost, nginx, and setup letsencrypt certs automatically.
 
 
 Role Variables
