@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: mattermost
   author: William Wu
   description: Setup Mattermost platform
   company: PyLabs
