@@ -41,7 +41,7 @@
       group: "{{ mattermost_group }}"
       mode: "0700"
       state: directory
-    with_items:
+    loop:
       - "data"
       - "logs"
       - "plugins"
