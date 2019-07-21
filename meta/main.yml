@@ -8,8 +8,10 @@ galaxy_info:
   platforms:
   - name: Debian
     versions:
-    - stretch
+    - Buster
+    - 10
   galaxy_tags:
+    - debian
     - mattermost
 dependencies:
   - pylabs.nginx

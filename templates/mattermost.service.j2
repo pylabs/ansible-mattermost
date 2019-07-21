@@ -5,8 +5,9 @@ After=mysql.service
 Requires=mysql.service
 
 [Service]
-Type=simple
-ExecStart={{ mattermost_root_dir }}/bin/platform
+Type=notify
+ExecStart={{ mattermost_root_dir }}/bin/mattermost
+TimeoutStartSec=3600
 WorkingDirectory={{ mattermost_root_dir }}
 Restart=always
 RestartSec=10
