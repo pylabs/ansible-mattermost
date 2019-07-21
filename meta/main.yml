@@ -15,5 +15,5 @@ galaxy_info:
     - mattermost
 dependencies:
   - pylabs.nginx
-  - pylabs.percona
+  - pylabs.mariadb
   - pylabs.letsencrypt
