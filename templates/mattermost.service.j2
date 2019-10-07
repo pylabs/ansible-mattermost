@@ -1,19 +1,19 @@
 [Unit]
 Description={{ mattermost_team_name }} mattermost
 After=network.target
-After=mysql.service
-Requires=mysql.service
+After=mariadb.service
+Requires=mariadb.service
 
 [Service]
 Type=notify
 ExecStart={{ mattermost_root_dir }}/bin/mattermost
 TimeoutStartSec=3600
-WorkingDirectory={{ mattermost_root_dir }}
 Restart=always
 RestartSec=10
+WorkingDirectory={{ mattermost_root_dir }}
 User={{ mattermost_user }}
 Group={{ mattermost_group }}
 LimitNOFILE=49152
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=mariadb.service

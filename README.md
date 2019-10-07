@@ -24,8 +24,8 @@ Dependencies
 ------------
 
 - pylabs.nginx
-- pylabs.percona
-- pylabs.letsencrypt
+- pylabs.mariadb
+- pylabs.letsencrypt_auth
 
 Example Playbook
 ----------------
@@ -40,6 +40,8 @@ Example Playbook
     mattermost_domain_name: "chat.pylabs.org"
     mattermost_db_password: mattermost
     mattermost_port: 8065
+    letsencrypt_auth_domain_names:
+      - "chat.pylabs.org"
 ```
 
 License
@@ -50,4 +52,4 @@ MIT
 Author Information
 ------------------
 
-William Wu
+William Wu <william@pylabs.org>

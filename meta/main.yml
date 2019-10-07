@@ -14,6 +14,5 @@ galaxy_info:
     - debian
     - mattermost
 dependencies:
-  - pylabs.nginx
   - pylabs.mariadb
-  - pylabs.letsencrypt
+  - pylabs.letsencrypt_auth

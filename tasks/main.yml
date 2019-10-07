@@ -83,5 +83,7 @@
       mode: "0644"
   - name: reload nginx
     command: "systemctl reload nginx"
+  - name: setup db index
+    script: "alter_db_index.sh {{ mattermost_db_name }}"
   tags:
     - mattermost
