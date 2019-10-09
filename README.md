@@ -23,8 +23,7 @@ mattermost_port: MATTERMOST_PORT (default: 8065)
 Dependencies
 ------------
 
-- pylabs.nginx
-- pylabs.mariadb
+- pylabs.percona
 - pylabs.letsencrypt_auth
 
 Example Playbook

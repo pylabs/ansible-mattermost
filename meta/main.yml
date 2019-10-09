@@ -14,5 +14,5 @@ galaxy_info:
     - debian
     - mattermost
 dependencies:
-  - pylabs.mariadb
+  - pylabs.percona # for ngram support
   - pylabs.letsencrypt_auth
