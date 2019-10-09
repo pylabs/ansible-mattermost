@@ -22,10 +22,11 @@
       mode: "0644"
   - name: restart mysql service
     service: "name=mysql.service state=restarted"
-  - name: create mattermost database
-    shell: "mysql -uroot -e 'CREATE DATABASE {{ mattermost_db_name }} CHARSET utf8mb4'"
-  - name: setup db user and password
-    shell: "mysql -uroot -e 'GRANT ALL ON {{ mattermost_db_name }}.* TO \"{{ mattermost_db_user }}\"@\"localhost\" IDENTIFIED BY \"{{ mattermost_db_password }}\"'"
+  - name: setup database
+    shell: 'mysql -uroot -e "{{ item }}"'
+    loop:
+      - "CREATE USER '{{ mattermost_db_user }}'@'localhost' IDENTIFIED BY '{{ mattermost_db_password }}'"
+      - "GRANT ALL ON {{ mattermost_db_name }}.* TO '{{ mattermost_db_user }}'@'localhost'"
   - name: create mattermost group account
     group:
       name: "{{ mattermost_group }}"
@@ -34,6 +35,7 @@
     user:
       name: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
+      system: yes
   - name: setup mattermost dir permissions
     file:
       path: "{{ mattermost_root_dir }}/{{ item }}"
