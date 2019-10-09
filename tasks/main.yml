@@ -13,19 +13,19 @@
     args:
       creates: "{{ mattermost_root_dir }}"
       removes: "/opt/mattermost"
-  - name: setup mysql fulltext index
+  - name: setup mariadb fulltext index
     copy:
       src: "mattermost.cnf"
       dest: "/etc/mysql/conf.d/mattermost.cnf"
       owner: root
       group: root
       mode: "0644"
-  - name: restart mysql service
-    service: "name=mysql.service state=restarted"
+  - name: restart mariadb service
+    service: "name=mariadb.service state=restarted"
   - name: create mattermost database
-    shell: "mysql -u'root' -p'{{ percona_root_password }}' -e 'CREATE DATABASE {{ mattermost_db_name }} CHARSET utf8mb4'"
+    shell: "mysql -uroot -e 'CREATE DATABASE {{ mattermost_db_name }} CHARSET utf8mb4'"
   - name: setup db user and password
-    shell: "mysql -u'root' -p'{{ percona_root_password }}' -e 'GRANT ALL ON {{ mattermost_db_name }}.* TO \"{{ mattermost_db_user }}\"@\"localhost\" IDENTIFIED BY \"{{ mattermost_db_password }}\"'"
+    shell: "mysql -uroot -e 'GRANT ALL ON {{ mattermost_db_name }}.* TO \"{{ mattermost_db_user }}\"@\"localhost\" IDENTIFIED BY \"{{ mattermost_db_password }}\"'"
   - name: create mattermost group account
     group:
       name: "{{ mattermost_group }}"
