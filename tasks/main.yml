@@ -25,6 +25,7 @@
   - name: setup database
     shell: 'mysql -uroot -e "{{ item }}"'
     loop:
+      - "CREATE DATABASE {{ mattermost_db_name }} CHARSET utf8mb4"
       - "CREATE USER '{{ mattermost_db_user }}'@'localhost' IDENTIFIED BY '{{ mattermost_db_password }}'"
       - "GRANT ALL ON {{ mattermost_db_name }}.* TO '{{ mattermost_db_user }}'@'localhost'"
   - name: create mattermost group account
