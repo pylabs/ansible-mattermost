@@ -1,8 +1,8 @@
 [Unit]
 Description={{ mattermost_team_name }} mattermost
 After=network.target
-After=mariadb.service
-Requires=mariadb.service
+After=mysql.service
+Requires=mysql.service
 
 [Service]
 Type=notify
@@ -16,4 +16,4 @@ Group={{ mattermost_group }}
 LimitNOFILE=49152
 
 [Install]
-WantedBy=mariadb.service
+WantedBy=mysql.service
