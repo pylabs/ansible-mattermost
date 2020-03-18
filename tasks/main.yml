@@ -80,7 +80,7 @@
   - name: install nginx production config
     template:
       src: "nginx_production.conf.j2"
-      dest: "/etc/nginx/sites-available/{{ mattermost_domain_name }}.conf"
+      dest: "/etc/nginx/sites-available/{{ mattermost_domain_name }}"
       owner: root
       group: root
       mode: "0644"
