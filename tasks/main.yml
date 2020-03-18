@@ -2,7 +2,7 @@
 - block:
   - name: get mattermost package
     unarchive:
-      src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
+      src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz"
       dest: "/opt"
       owner: root
       group: root
