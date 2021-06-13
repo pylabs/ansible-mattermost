@@ -1,7 +1,7 @@
 ---
 - block:
   - name: get mattermost package
-    unarchive:
+    ansible.builtin.unarchive:
       src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz"
       dest: "/opt"
       owner: root
@@ -9,36 +9,36 @@
       mode: "0755"
       remote_src: "yes"
   - name: rename mattermost path to appropriate path
-    command: "mv /opt/mattermost '{{ mattermost_root_dir }}'"
+    ansible.builtin.command: "mv /opt/mattermost '{{ mattermost_root_dir }}'"
     args:
       creates: "{{ mattermost_root_dir }}"
       removes: "/opt/mattermost"
   - name: setup mysql fulltext index
-    copy:
+    ansible.builtin.copy:
       src: "mattermost.cnf"
       dest: "/etc/mysql/conf.d/mattermost.cnf"
       owner: root
       group: root
       mode: "0644"
   - name: restart mysql service
-    service: "name=mysql.service state=restarted"
+    ansible.builtin.service: "name=mysql.service state=restarted"
   - name: setup database
-    shell: 'mysql -uroot -e "{{ item }}"'
+    ansible.builtin.shell: 'mysql -uroot -e "{{ item }}"'
     loop:
       - "CREATE DATABASE IF NOT EXISTS {{ mattermost_db_name }} CHARSET utf8mb4"
       - "CREATE USER IF NOT EXISTS '{{ mattermost_db_user }}'@'localhost' IDENTIFIED BY '{{ mattermost_db_password }}'"
       - "GRANT ALL ON {{ mattermost_db_name }}.* TO '{{ mattermost_db_user }}'@'localhost'"
   - name: create mattermost group account
-    group:
+    ansible.builtin.group:
       name: "{{ mattermost_group }}"
       state: "present"
   - name: create mattermost user account
-    user:
+    ansible.builtin.user:
       name: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
       system: yes
   - name: setup mattermost dir permissions
-    file:
+    ansible.builtin.file:
       path: "{{ mattermost_root_dir }}/{{ item }}"
       owner: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
@@ -49,44 +49,44 @@
       - "logs"
       - "plugins"
   - name: setup mattermost config DataSource
-    replace:
+    ansible.builtin.replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
       regexp: '"DataSource": "[^"]*"'
       replace: '"DataSource": "{{ mattermost_db_user }}:{{ mattermost_db_password }}@tcp(localhost:3306)/{{ mattermost_db_name }}?charset=utf8mb4,utf8&readTimeout=30s&writeTimeout=30s"'
   - name: setup mattermost config ListenAddress
-    replace:
+    ansible.builtin.replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
       regexp: '"ListenAddress": "[^"]*"'
       replace: '"ListenAddress": ":{{ mattermost_port }}"'
   - name: setup mattermost config permission
-    file:
+    ansible.builtin.file:
       path: "{{ mattermost_root_dir }}/config/config.json"
       owner: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
       mode: "0600"
   - name: setup mattermost systemd service
-    template:
+    ansible.builtin.template:
       src: "mattermost.service.j2"
       dest: "/etc/systemd/system/{{ mattermost_team_name }}_mattermost.service"
       owner: root
       group: root
       mode: "0644"
   - name: reload systemd service
-    command: "systemctl daemon-reload"
+    ansible.builtin.command: "systemctl daemon-reload"
   - name: enable mattermost service
-    command: "systemctl enable {{ mattermost_team_name }}_mattermost.service"
+    ansible.builtin.command: "systemctl enable {{ mattermost_team_name }}_mattermost.service"
   - name: start mattermost service
-    command: "systemctl start {{ mattermost_team_name }}_mattermost.service"
+    ansible.builtin.command: "systemctl start {{ mattermost_team_name }}_mattermost.service"
   - name: install nginx production config
-    template:
+    ansible.builtin.template:
       src: "nginx_production.conf.j2"
       dest: "/etc/nginx/sites-available/{{ mattermost_domain_name }}"
       owner: root
       group: root
       mode: "0644"
   - name: reload nginx
-    command: "systemctl reload nginx"
+    ansible.builtin.command: "systemctl reload nginx"
   - name: setup db index
-    script: "alter_db_index.sh {{ mattermost_db_name }}"
+    ansible.builtin.script: "alter_db_index.sh {{ mattermost_db_name }}"
   tags:
     - mattermost
