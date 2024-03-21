@@ -2,12 +2,13 @@
 Description={{ mattermost_team_name }} mattermost
 After=network.target
 After=mysql.service
-Requires=mysql.service
+BindsTo=mysql.service
 
 [Service]
 Type=notify
 ExecStart={{ mattermost_root_dir }}/bin/mattermost
 TimeoutStartSec=3600
+KillMode=mixed
 Restart=always
 RestartSec=10
 WorkingDirectory={{ mattermost_root_dir }}
