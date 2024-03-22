@@ -68,7 +68,7 @@
     ansible.builtin.replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
       regexp: '"SiteURL": ""'
-      replace: '"SiteURL": "{{ mattermost_domain_name }}"'
+      replace: '"SiteURL": "https://{{ mattermost_domain_name }}"'
   - name: setup mattermost config ListenAddress
     ansible.builtin.replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
