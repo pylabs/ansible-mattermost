@@ -37,23 +37,29 @@
       name: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
       system: yes
-  - name: setup mattermost dir permissions
+  - name: create mattermost data dir
     ansible.builtin.file:
-      path: "{{ mattermost_root_dir }}/{{ item }}"
+      path: "{{ mattermost_root_dir }}/data"
+      state: directory
+  - name: setup mattermost dir owner and group
+    ansible.builtin.file:
+      path: "{{ mattermost_root_dir }}"
       owner: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
-      mode: "0700"
       state: directory
-    loop:
-      - "data"
-      - "logs"
-      - "plugins"
-  - name: setup mattermost config DriverName
+      recurse: yes
+  - name: setup mattermost dir permissions
+    ansible.builtin.file:
+      path: "{{ mattermost_root_dir }}"
+      state: directory
+      mode: g+w
+      recurse: yes
+  - name: setup mattermost config database DriverName
     ansible.builtin.replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
-      regexp: '"DriverName": "[^"]*"'
+      regexp: '"DriverName": "postgres"'
       replace: '"DriverName": "mysql"'
-  - name: setup mattermost config DataSource
+  - name: setup mattermost config database DataSource
     ansible.builtin.replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
       regexp: '"DataSource": "[^"]*"'
@@ -66,7 +72,7 @@
   - name: setup mattermost config ListenAddress
     ansible.builtin.replace:
       path: "{{ mattermost_root_dir }}/config/config.json"
-      regexp: '"ListenAddress": "[^"]*"'
+      regexp: '"ListenAddress": ":8065"'
       replace: '"ListenAddress": ":{{ mattermost_port }}"'
   - name: setup mattermost config permission
     ansible.builtin.file:
