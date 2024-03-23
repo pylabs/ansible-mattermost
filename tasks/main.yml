@@ -36,6 +36,8 @@
     ansible.builtin.user:
       name: "{{ mattermost_user }}"
       group: "{{ mattermost_group }}"
+      shell: "/usr/sbin/nologin"
+      home: "/nonexistent"
       system: yes
   - name: create mattermost data dir
     ansible.builtin.file:
